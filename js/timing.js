@@ -2,6 +2,7 @@
 'use strict';
 
 function forEachActiveNamedItem(data, time, inheritedStartDelay, callback, param) {
+  forEachItem(data, ensureDefaultTimingValues);
   var result = transformedTime(data, time, inheritedStartDelay);
   var active = (result.region === 'during' || data.timing.fill === 'both' ||
     (result.region === 'before' && data.timing.fill === 'backwards') ||
@@ -68,21 +69,24 @@ function transformedTime(data, time, inheritedStartDelay) {
   return result;
 }
 
-function ensureDefaultTimingValuesRecursive(data) {
-  ensureDefaultTimingValues(data.timing);
+function forEachItem(data, callback) {
+  callback(data);
   switch (data.type) {
   case 'animation':
     break;
   case 'sequence':
   case 'parallel':
-    data.children.forEach(ensureDefaultTimingValuesRecursive);
+    data.children.forEach(function(childData) {
+      forEachItem(childData, callback);
+    });
     break;
   default:
     throw Data.typeError;
   }
 }
 
-function ensureDefaultTimingValues(timing) {
+function ensureDefaultTimingValues(data) {
+  var timing = data.timing;
   if (typeof timing.startDelay === 'undefined') {
     timing.startDelay = 0;
   }

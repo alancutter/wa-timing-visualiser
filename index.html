@@ -11,6 +11,9 @@ body {
 #warning.active {
   visibility: visible;
 }
+textarea {
+  display: inline-block;
+}
 </style>
 <script src="js/data.js"></script>
 <script src="js/graph.js"></script>
@@ -21,5 +24,5 @@ body {
 <body>
 <canvas id="canvas"></canvas>
 <div id="warning">Input JSON not parseable: <span id="warningReason"></span></div>
-<textarea id="dataTextView" rows="32" cols="80"></textarea>
+<textarea id="dataTextView" rows="24" cols="80"></textarea>
 </body>

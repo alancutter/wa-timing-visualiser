@@ -11,6 +11,7 @@ function init() {
   warning = document.querySelector('#warning');
   warningReason = document.querySelector('#warningReason');
   input.addEventListener('input', attemptUpdate);
+  input.addEventListener('keydown', keydownHandler);
 }
 
 function attemptUpdate() {
@@ -29,6 +30,24 @@ function handleUpdate(data) {
   updateHandlers.forEach(function(handler) {
     handler(data);
   });
+}
+
+function keydownHandler(event) {
+  var tabKeyCode = 9;
+  switch (event.keyCode) {
+  case tabKeyCode: {
+    event.preventDefault();
+    var value = input.value;
+    var selectionEnd = input.selectionEnd;
+    input.value = value.slice(0, input.selectionStart) + '  ' + value.slice(selectionEnd);
+    input.selectionStart = input.selectionEnd = selectionEnd + 2;
+    break;
+  }
+  }
+}
+
+function saveContents() {
+
 }
 
 function addEventListener(event, handler) {
