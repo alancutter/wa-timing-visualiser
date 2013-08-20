@@ -1,7 +1,7 @@
 'use strict';
 
 var testData = {
-  name: 'container',
+  name: 'Container',
   type: 'sequence',
   timing: {
     easing: 'linear',
@@ -16,7 +16,7 @@ var testData = {
   },
   children: [
     {
-      name: 'a',
+      name: 'Animation A',
       type: 'animation',
       timing: {
         easing: 'ease',
@@ -31,7 +31,7 @@ var testData = {
       }
     },
     {
-      name: 'b',
+      name: 'Animation B',
       type: 'animation',
       timing: {
         easing: 'ease',
@@ -66,11 +66,12 @@ var itemPadding = 50;
 
 function initCanvas() {
   canvas = document.querySelector('#canvas');
+  width = window.innerWidth - 2;
+  canvas.width = width;
 }
 
 function resetCanvas() {
   height = (borderPadding * 2) + (nameList.length * itemHeight) + (Math.max(nameList.length - 1, 0) * itemPadding);
-  canvas.width = width;
   canvas.height = height;
   context = canvas.getContext('2d');
   context.textBaseline = 'top';
@@ -82,7 +83,7 @@ function resetCanvas() {
   context.beginPath();
   for (var x = borderPadding; x <= width - borderPadding; x += pixelsPerSecond) {
     context.moveTo(x, 0);
-    context.lineTo(x, height - borderPadding);
+    context.lineTo(x, height);
   }
   context.stroke();
 
@@ -90,6 +91,7 @@ function resetCanvas() {
   context.fillStyle = 'grey';
   for (var x = borderPadding, seconds = 0; x <= width - borderPadding; x += pixelsPerSecond, seconds++) {
     context.fillText(seconds, x + textPaddingLeft, textPaddingTop);
+    context.fillText(seconds, x + textPaddingLeft, height - borderPadding + textPaddingTop);
   }
 
   // Item borders.
@@ -117,7 +119,7 @@ function resetNames() {
 function loadNames(data) {
   if (data.name && !(data.name in nameInfoMap)) {
     nameInfoMap[data.name] = {
-      colour: colourForName(data.name),
+      colour: colourForIndex(nameList.length),
       index: nameList.length,
       graph: [],
     };
@@ -135,15 +137,8 @@ function loadNames(data) {
   }
 }
 
-function colourForName(name) {
-  if (typeof name === 'undefined') {
-    return 'grey';
-  }
-  var hue = 0;
-  for (var i = 0; i < name.length; i++) {
-    hue += name.charCodeAt(i) * 40;
-  }
-  return 'hsl(' + (hue % 360) + ', 100%, 50%)';
+function colourForIndex(index) {
+  return 'hsl(' + ((index * 200) % 360) + ', 100%, 50%)';
 }
 
 function fireActiveAnimations(data, time, inheritedStartDelay, callback, param) {
