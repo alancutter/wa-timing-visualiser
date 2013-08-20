@@ -3,13 +3,13 @@
 
 var input;
 var warning;
-var warningOutput;
+var warningReason;
 var updateHandlers = [];
 
 function init() {
   input = document.querySelector('#dataTextView');
   warning = document.querySelector('#warning');
-  warningOutput = document.querySelector('#warningOutput');
+  warningReason = document.querySelector('#warningReason');
   input.addEventListener('input', attemptUpdate);
 }
 
@@ -21,7 +21,7 @@ function attemptUpdate() {
     }
     catch (error) {
       warning.classList.add('active');
-      warningOutput.innerText = error.toString();
+      warningReason.innerText = error.toString();
     }
 }
 
@@ -32,21 +32,21 @@ function handleUpdate(data) {
 }
 
 function addEventListener(event, handler) {
-  if (event !== 'update' or typeof handler !== 'function') {
+  if (event !== 'update' || typeof handler !== 'function') {
     return;
   }
   updateHandlers.push(handler);
 }
 
 function setData(data) {
-  input.value = JSON.stringify(data);
+  input.value = JSON.stringify(data, null, 2);
   handleUpdate(data);
 }
 
 window.UI = {
   init: init,
   addEventListener: addEventListener,
-  set: setData,
+  setData: setData,
 };
 
 })();

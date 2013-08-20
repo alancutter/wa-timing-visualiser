@@ -1,8 +1,6 @@
 (function(){
 'use strict';
 
-var typeError = new Error('Unknown data type encountered.');
-
 var presets = {
   test: {
     name: 'Container',
@@ -43,9 +41,19 @@ var presets = {
   }
 }
 
+var loadHandlers = [];
 var currentData;
 var nameIndexMap = {};
 var nameList = [];
+
+var typeError = new Error('Unknown data type encountered.');
+
+function addEventListener(event, handler) {
+  if (event !== 'load' || typeof handler !== 'function') {
+    return;
+  }
+  loadHandlers.push(handler);
+}
 
 function preset(presetName) {
   return presets[presetName];
@@ -54,8 +62,11 @@ function preset(presetName) {
 function load(data) {
   validateData(data);
   currentData = data;
-  resetNames():
+  resetNames();
   registerNames(data);
+  loadHandlers.forEach(function(callback) {
+    callback(data);
+  });
 }
 
 function validateData(data) {
@@ -88,9 +99,9 @@ function resetNames() {
 
 function registerNames(data) {
   if (typeof data.name !== 'undefined') {
-    nameIndexMap[name] = nameList.length;
+    nameIndexMap[data.name] = nameList.length;
   }
-  nameList.push(name);
+  nameList.push(data.name);
   switch (data.type) {
   case 'animation':
     break;
@@ -120,6 +131,7 @@ function forEachName(callback) {
 }
 
 window.Data = {
+  addEventListener: addEventListener,
   preset: preset,
   load: load,
   current: getCurrentData,
