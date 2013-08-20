@@ -12,7 +12,7 @@ body {
   visibility: visible;
 }
 textarea {
-  display: inline-block;
+  float: left;
 }
 </style>
 <script src="js/data.js"></script>
@@ -25,4 +25,6 @@ textarea {
 <canvas id="canvas"></canvas>
 <div id="warning">Input JSON not parseable: <span id="warningReason"></span></div>
 <textarea id="dataTextView" rows="24" cols="80"></textarea>
+<button id="saveButton" title="Ctrl-S in text area">SAVE</button>
+<div id="loadButtonContainer"></div>
 </body>

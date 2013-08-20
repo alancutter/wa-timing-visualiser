@@ -4,14 +4,18 @@
 var input;
 var warning;
 var warningReason;
+var loadButtonContainer;
 var updateHandlers = [];
+var saveList = [];
 
 function init() {
   input = document.querySelector('#dataTextView');
   warning = document.querySelector('#warning');
   warningReason = document.querySelector('#warningReason');
+  loadButtonContainer = document.querySelector('#loadButtonContainer');
   input.addEventListener('input', attemptUpdate);
   input.addEventListener('keydown', keydownHandler);
+  document.querySelector('#saveButton').addEventListener('click', saveContents);
 }
 
 function attemptUpdate() {
@@ -33,9 +37,12 @@ function handleUpdate(data) {
 }
 
 function keydownHandler(event) {
-  var tabKeyCode = 9;
+  var keyCodeTab = 9;
+  var keyCodeS = 83;
+  var keyCode0 = 48;
+  var keyCode9 = 57;
   switch (event.keyCode) {
-  case tabKeyCode: {
+  case keyCodeTab: {
     event.preventDefault();
     var value = input.value;
     var selectionEnd = input.selectionEnd;
@@ -43,11 +50,38 @@ function keydownHandler(event) {
     input.selectionStart = input.selectionEnd = selectionEnd + 2;
     break;
   }
+  case keyCodeS:
+    if (event.ctrlKey) {
+      event.preventDefault();
+      saveContents();
+    }
+    break;
+  }
+  if (event.altKey && event.keyCode >= keyCode0 && event.keyCode <= keyCode9) {
+    var slot = event.keyCode - keyCode0;
+    if (slot < saveList.length) {
+      loadContents(slot);
+    }
   }
 }
 
 function saveContents() {
+  var slot = saveList.length;
+  saveList.push(input.value);
+  var button = document.createElement('button');
+  button.innerText = 'Load ' + slot;
+  button.addEventListener('click', function() {
+    loadContents(slot);
+  });
+  if (slot < 10) {
+    button.setAttribute('title', 'Alt-' + slot + ' in text area');
+  }
+  loadButtonContainer.appendChild(button);
+}
 
+function loadContents(slot) {
+  input.value = saveList[slot];
+  attemptUpdate();
 }
 
 function addEventListener(event, handler) {
