@@ -136,6 +136,9 @@ function loadNames(data) {
 }
 
 function colourForName(name) {
+  if (typeof name === 'undefined') {
+    return 'grey';
+  }
   var hue = 0;
   for (var i = 0; i < name.length; i++) {
     hue += name.charCodeAt(i) * 40;
