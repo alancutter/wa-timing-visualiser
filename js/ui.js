@@ -16,6 +16,7 @@ function init() {
   input.addEventListener('input', attemptUpdate);
   input.addEventListener('keydown', keydownHandler);
   document.querySelector('#saveButton').addEventListener('click', saveContents);
+  document.querySelector('#clearSavesButton').addEventListener('click', clearSaves);
 }
 
 function attemptUpdate() {
@@ -38,9 +39,10 @@ function handleUpdate(data) {
 
 function keydownHandler(event) {
   var keyCodeTab = 9;
-  var keyCodeS = 83;
   var keyCode0 = 48;
   var keyCode9 = 57;
+  var keyCodeC = 67;
+  var keyCodeS = 83;
   switch (event.keyCode) {
   case keyCodeTab: {
     event.preventDefault();
@@ -50,6 +52,11 @@ function keydownHandler(event) {
     input.selectionStart = input.selectionEnd = selectionEnd + 2;
     break;
   }
+  case keyCodeC:
+    if (event.altKey) {
+      clearSaves();
+    }
+    break;
   case keyCodeS:
     if (event.ctrlKey) {
       event.preventDefault();
@@ -77,6 +84,13 @@ function saveContents() {
     button.setAttribute('title', 'Alt-' + slot + ' in text area');
   }
   loadButtonContainer.appendChild(button);
+}
+
+function clearSaves() {
+  saveList = [];
+  while (loadButtonContainer.hasChildNodes()) {
+    loadButtonContainer.removeChild(loadButtonContainer.lastChild);
+  }
 }
 
 function loadContents(slot) {
