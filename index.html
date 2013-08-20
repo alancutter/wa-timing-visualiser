@@ -2,14 +2,23 @@
 <head>
 <style>
 canvas {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    border: solid black 1px;
+}
+#warning {
+  color: red;
+  visibility: hidden;
+}
+#warning, .active {
+  visibility: visible;
 }
 </style>
-<script src="main.js"></script>
+<script src="js/data.js"></script>
+<script src="js/graph.js"></script>
+<script src="js/main.js"></script>
+<script src="js/timing.js"></script>
+<script src="js/ui.js"></script>
 </head>
 <body>
 <canvas id="canvas"></canvas>
+<div id="warning">Input JSON not parseable: <span id="warningReason"></span></div>
+<textarea id="dataTextView"></textarea>
 </body>

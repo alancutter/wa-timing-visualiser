@@ -1,68 +1,17 @@
+(function(){
 'use strict';
 
-var testData = {
-  name: 'Container',
-  type: 'sequence',
-  timing: {
-    easing: 'linear',
-    direction: 'normal',
-    iterationStart: 0,
-    iterations: 2,
-    duration: 'auto',
-    playbackRate: 1,
-    startDelay: 1,
-    endDelay: 0,
-    fill: 'both',
-  },
-  children: [
-    {
-      name: 'Animation A',
-      type: 'animation',
-      timing: {
-        easing: 'ease',
-        direction: 'alternate',
-        iterationStart: 0,
-        iterations: 2,
-        duration: 1,
-        playbackRate: 2,
-        startDelay: 1,
-        endDelay: 1,
-        fill: 'backwards',
-      }
-    },
-    {
-      name: 'Animation B',
-      type: 'animation',
-      timing: {
-        easing: 'ease',
-        direction: 'alternate',
-        iterationStart: 0,
-        iterations: 1,
-        duration: 1,
-        playbackRate: 1,
-        startDelay: -1,
-        endDelay: -0.5,
-        fill: 'forwards',
-      }
-    },
-  ],
-};
+window.addEventListener('load', function() {
+  var data = Data.preset('test');
+  UI.init();
+  UI.addEventListener('update', Data.load);
+  Data.addEventListener('load', Graph.renderData);
+  window.addEventListener('resize', function() {
+    Graph.renderData(Data.current());
+  });
 
-var typeErrorMessage = 'Unknown data type encountered.';
-
-var canvas;
-var context;
-var nameInfoMap = {};
-var nameList = [];
-
-var width = 800;
-var height;
-var borderPadding = 20;
-var textPaddingLeft = 2;
-var textPaddingTop = 0;
-var pixelsPerSecond = 60;
-var itemHeight = 50;
-var itemPadding = 50;
+  UI.setData(Data.preset('test'));
+});
 
 function initCanvas() {
   canvas = document.querySelector('#canvas');
@@ -70,75 +19,9 @@ function initCanvas() {
   canvas.width = width;
 }
 
-function resetCanvas() {
-  height = (borderPadding * 2) + (nameList.length * itemHeight) + (Math.max(nameList.length - 1, 0) * itemPadding);
-  canvas.height = height;
-  context = canvas.getContext('2d');
-  context.textBaseline = 'top';
-  context.fillStyle = 'black';
-  context.fillRect(0, 0, width, height);
-
-  // Second lines.
-  context.strokeStyle = 'grey';
-  context.beginPath();
-  for (var x = borderPadding; x <= width - borderPadding; x += pixelsPerSecond) {
-    context.moveTo(x, 0);
-    context.lineTo(x, height);
-  }
-  context.stroke();
-
-  // Seconds.
-  context.fillStyle = 'grey';
-  for (var x = borderPadding, seconds = 0; x <= width - borderPadding; x += pixelsPerSecond, seconds++) {
-    context.fillText(seconds, x + textPaddingLeft, textPaddingTop);
-    context.fillText(seconds, x + textPaddingLeft, height - borderPadding + textPaddingTop);
-  }
-
-  // Item borders.
-  context.lineWidth = 0.5;
-  nameList.forEach(function(name) {
-    var nameInfo = nameInfoMap[name];
-    context.strokeStyle = nameInfo.colour;
-    context.strokeRect(borderPadding, borderPadding + (nameInfo.index * (itemHeight + itemPadding)), width - (borderPadding * 2), itemHeight);
-  });
-  context.lineWidth = 1;
-
-  // Item names.
-  nameList.forEach(function(name) {
-    var nameInfo = nameInfoMap[name];
-    context.fillStyle = nameInfo.colour;
-    context.fillText(name, borderPadding + textPaddingLeft, borderPadding + (nameInfo.index * (itemHeight + itemPadding)) + textPaddingTop);
-  });
-}
-
 function resetNames() {
   nameInfoMap = {};
   nameList = [];
-}
-
-function loadNames(data) {
-  if (data.name && !(data.name in nameInfoMap)) {
-    nameInfoMap[data.name] = {
-      colour: colourForIndex(nameList.length),
-      index: nameList.length,
-      graph: [],
-    };
-    nameList.push(data.name);
-  }
-  switch (data.type) {
-  case 'animation':
-    break;
-  case 'sequence':
-  case 'parallel':
-    data.children.forEach(loadNames);
-    break;
-  default:
-    assert(false, typeErrorMessage);
-  }
-}
-
-function colourForIndex(index) {
-  return 'hsl(' + ((index * 200) % 360) + ', 100%, 50%)';
 }
 
 function fireActiveAnimations(data, time, inheritedStartDelay, callback, param) {
@@ -194,7 +77,7 @@ function transformedTime(data, time, inheritedStartDelay) {
   ensureIterationDuration(data);
   var iterationTime = spedTime / data._iterationDuration + timing.iterationStart;
   var iteration = Math.floor(iterationTime);
-  iteration -= (iteration === timing.iterations);
+  iteration -= (iteration === (timing.iterations - timing.iterationStart));
   var direction = timing.direction;
   if (direction === 'alternate' || direction === 'alternate-reverse') {
     direction = ((iteration + (direction === 'alternate-reverse')) % 2) === 0 ? 'normal' : 'reverse';
@@ -207,6 +90,51 @@ function transformedTime(data, time, inheritedStartDelay) {
   result.fraction = data._timingFunction(iterationFraction);
   result.time = result.fraction * data._iterationDuration;
   return result;
+}
+
+function ensureDefaultTimingValuesRecursive(data) {
+  ensureDefaultTimingValues(data.timing);
+  switch (data.type) {
+  case 'animation':
+    break;
+  case 'sequence':
+  case 'parallel':
+    data.children.forEach(ensureDefaultTimingValuesRecursive);
+    break;
+  default:
+    assert(false, typeErrorMessage);
+    break;
+  }
+}
+
+function ensureDefaultTimingValues(timing) {
+  if (typeof timing.startDelay === 'undefined') {
+    timing.startDelay = 0;
+  }
+  if (typeof timing.endDelay === 'undefined') {
+    timing.endDelay = 0;
+  }
+  if (typeof timing.iterationStart === 'undefined') {
+    timing.iterationStart = 0;
+  }
+  if (typeof timing.iterations === 'undefined') {
+    timing.iterations = 1;
+  }
+  if (typeof timing.duration === 'undefined') {
+    timing.duration = 'auto';
+  }
+  if (typeof timing.playbackRate === 'undefined') {
+    timing.playbackRate = 1;
+  }
+  if (typeof timing.direction === 'undefined') {
+    timing.direction = 'normal';
+  }
+  if (typeof timing.fill === 'undefined') {
+    timing.fill = 'forwards';
+  }
+  if (typeof timing.easing === 'undefined') {
+    timing.easing = 'linear';
+  }
 }
 
 function ensureActiveDuration(data) {
@@ -366,15 +294,5 @@ function drawGraph(name) {
   context.lineWidth = 1;
 }
 
-window.addEventListener('load', function() {
-  initCanvas();
-  var data = testData;
-  resetNames();
-  loadNames(data);
-  resetCanvas();
-  for (var x = borderPadding; x <= width - borderPadding; x++) {
-    var time = (x - borderPadding) / pixelsPerSecond;
-    fireActiveAnimations(data, time, 0, setGraphValue, x);
-  }
-  nameList.forEach(drawGraph);
-});
+
+})();
