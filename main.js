@@ -12,7 +12,7 @@ var testData = {
     playbackRate: 1,
     startDelay: 1,
     endDelay: 0,
-    fill: 'forwards',
+    fill: 'both',
   },
   children: [
     {
@@ -27,7 +27,7 @@ var testData = {
         playbackRate: 2,
         startDelay: 1,
         endDelay: 1,
-        fill: 'both',
+        fill: 'backwards',
       }
     },
     {
@@ -42,7 +42,7 @@ var testData = {
         playbackRate: 1,
         startDelay: -1,
         endDelay: -0.5,
-        fill: 'both',
+        fill: 'forwards',
       }
     },
   ],
@@ -180,6 +180,7 @@ function transformedTime(data, time, inheritedStartDelay) {
   ensureIterationDuration(data);
   var iterationTime = spedTime / data._iterationDuration + timing.iterationStart;
   var iteration = Math.floor(iterationTime);
+  iteration -= (iteration === timing.iterations);
   var direction = timing.direction;
   if (direction === 'alternate' || direction === 'alternate-reverse') {
     direction = ((iteration + (direction === 'alternate-reverse')) % 2) === 0 ? 'normal' : 'reverse';
