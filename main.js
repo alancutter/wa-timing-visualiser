@@ -16,7 +16,7 @@ var testData = {
   },
   children: [
     {
-      name: 'A',
+      name: 'a',
       type: 'animation',
       timing: {
         easing: 'ease',
@@ -31,7 +31,7 @@ var testData = {
       }
     },
     {
-      name: 'B',
+      name: 'b',
       type: 'animation',
       timing: {
         easing: 'ease',
@@ -48,7 +48,7 @@ var testData = {
   ],
 };
 
-var typeErrorMessage = 'Unknown data type encountered.'
+var typeErrorMessage = 'Unknown data type encountered.';
 
 var canvas;
 var context;
@@ -57,7 +57,9 @@ var nameList = [];
 
 var width = 800;
 var height;
-var borderPadding = 10;
+var borderPadding = 20;
+var textPaddingLeft = 2;
+var textPaddingTop = 0;
 var pixelsPerSecond = 60;
 var itemHeight = 50;
 var itemPadding = 50;
@@ -71,6 +73,7 @@ function resetCanvas() {
   canvas.width = width;
   canvas.height = height;
   context = canvas.getContext('2d');
+  context.textBaseline = 'top';
   context.fillStyle = 'black';
   context.fillRect(0, 0, width, height);
 
@@ -78,10 +81,16 @@ function resetCanvas() {
   context.strokeStyle = 'grey';
   context.beginPath();
   for (var x = borderPadding; x <= width - borderPadding; x += pixelsPerSecond) {
-    context.moveTo(x, borderPadding);
+    context.moveTo(x, 0);
     context.lineTo(x, height - borderPadding);
   }
   context.stroke();
+
+  // Seconds.
+  context.fillStyle = 'grey';
+  for (var x = borderPadding, seconds = 0; x <= width - borderPadding; x += pixelsPerSecond, seconds++) {
+    context.fillText(seconds, x + textPaddingLeft, textPaddingTop);
+  }
 
   // Item borders.
   context.lineWidth = 0.5;
@@ -91,6 +100,13 @@ function resetCanvas() {
     context.strokeRect(borderPadding, borderPadding + (nameInfo.index * (itemHeight + itemPadding)), width - (borderPadding * 2), itemHeight);
   });
   context.lineWidth = 1;
+
+  // Item names.
+  nameList.forEach(function(name) {
+    var nameInfo = nameInfoMap[name];
+    context.fillStyle = nameInfo.colour;
+    context.fillText(name, borderPadding + textPaddingLeft, borderPadding + (nameInfo.index * (itemHeight + itemPadding)) + textPaddingTop);
+  });
 }
 
 function resetNames() {
@@ -122,7 +138,7 @@ function loadNames(data) {
 function colourForName(name) {
   var hue = 0;
   for (var i = 0; i < name.length; i++) {
-    hue += name.charCodeAt(i) * 32;
+    hue += name.charCodeAt(i) * 40;
   }
   return 'hsl(' + (hue % 360) + ', 100%, 50%)';
 }
