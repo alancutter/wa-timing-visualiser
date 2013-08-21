@@ -7,7 +7,7 @@ var presets = {
     type: 'sequence',
     timing: {
       iterations: 2,
-      startDelay: 1,
+      delay: 1,
       fill: 'both',
     },
     children: [
@@ -20,8 +20,7 @@ var presets = {
           iterations: 2,
           duration: 1,
           playbackRate: 2,
-          startDelay: 1,
-          endDelay: 1,
+          delay: 1,
           fill: 'backwards',
         }
       },
@@ -33,8 +32,7 @@ var presets = {
           direction: 'alternate',
           iterations: 1,
           duration: 1,
-          startDelay: -1,
-          endDelay: -0.5,
+          delay: -1,
         }
       },
     ],
