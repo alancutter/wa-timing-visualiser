@@ -8,6 +8,7 @@ var loadButtonContainer;
 var updateHandlers = [];
 var saveList = [];
 
+
 function init() {
   input = document.querySelector('#dataTextView');
   warning = document.querySelector('#warning');

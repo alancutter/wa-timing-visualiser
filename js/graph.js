@@ -7,6 +7,7 @@ var textPaddingTop = 0;
 var pixelsPerSecond = 60;
 var itemHeight = 50;
 var itemPadding = 50;
+var colourSeed;
 
 var canvas;
 var context;
@@ -16,8 +17,10 @@ var height;
 var itemCount;
 var graphMap;
 
+
 function init() {
   canvas = document.querySelector('#canvas');
+  colourSeed = Math.random() * 360;
 }
 
 function renderData() {
@@ -84,7 +87,7 @@ function renderItemContainers() {
 }
 
 function colourForIndex(index) {
-  return 'hsl(' + ((index * 200) % 360) + ', 100%, 50%)';
+  return 'hsl(' + ((colourSeed + (index * 100)) % 360) + ', 100%, 50%)';
 }
 
 function resetGraphData() {
@@ -97,7 +100,7 @@ function resetGraphData() {
 function generateGraphData() {
   for (var x = borderPadding; x <= width - borderPadding; x++) {
     var time = (x - borderPadding) / pixelsPerSecond;
-    Timing.forEachActiveNamedItem(Data.current(), time, 0, setGraphValue, x);
+    TimingModel.forEachActiveNamedItemAtTime(time, setGraphValue, x);
   }
 }
 

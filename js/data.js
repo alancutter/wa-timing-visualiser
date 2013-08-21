@@ -48,6 +48,7 @@ var nameList = [];
 
 var typeError = new Error('Unknown data type encountered.');
 
+
 function addEventListener(event, handler) {
   if (event !== 'load' || typeof handler !== 'function') {
     return;
@@ -100,8 +101,8 @@ function resetNames() {
 function registerNames(data) {
   if (typeof data.name !== 'undefined') {
     nameIndexMap[data.name] = nameList.length;
+    nameList.push(data.name);
   }
-  nameList.push(data.name);
   switch (data.type) {
   case 'animation':
     break;

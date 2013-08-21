@@ -15,16 +15,17 @@ textarea {
   float: left;
 }
 </style>
+<script src="js/web-animations/web-animations.js"></script>
 <script src="js/data.js"></script>
 <script src="js/graph.js"></script>
 <script src="js/main.js"></script>
-<script src="js/timing.js"></script>
+<script src="js/timing-model.js"></script>
 <script src="js/ui.js"></script>
 </head>
 <body>
 <canvas id="canvas"></canvas>
 <div id="warning">Input JSON not parseable: <span id="warningReason"></span></div>
-<textarea id="dataTextView" rows="24" cols="80"></textarea>
+<textarea id="dataTextView" rows="24" cols="50"></textarea>
 <button id="saveButton" title="Ctrl-S in text area">SAVE</button>
 <button id="clearSavesButton" title="Alt-C in text area">CLEAR SAVES</button>
 <div id="loadButtonContainer"></div>
