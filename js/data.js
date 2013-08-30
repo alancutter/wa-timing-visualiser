@@ -3,36 +3,95 @@
 
 var presets = {
   test: {
-    name: 'Container',
-    type: 'sequence',
+    name: 'Parallel Container',
+    type: 'parallel',
     timing: {
-      iterations: 2,
-      delay: 1,
-      fill: 'both',
+      easing: 'cubic-bezier(0, -1, 1, 2)',
+      // easing: 'linear',
     },
     children: [
       {
-        name: 'Animation A',
-        type: 'animation',
-        timing: {
-          easing: 'ease',
-          direction: 'alternate',
-          iterations: 2,
-          duration: 1,
-          playbackRate: 2,
-          delay: 1,
-          fill: 'backwards',
-        }
+        name: 'Sequence A',
+        type: 'sequence',
+        children: [
+          {
+            name: 'A0',
+            type: 'animation',
+            timing: {
+              duration: 3,
+            }
+          },
+          {
+            name: 'A1',
+            type: 'animation',
+            timing: {
+              duration: 3,
+            }
+          },
+          {
+            name: 'A2',
+            type: 'animation',
+            timing: {
+              duration: 3,
+            }
+          },
+        ],
       },
       {
-        name: 'Animation B',
-        type: 'animation',
+        name: 'Sequence B',
+        type: 'sequence',
+        children: [
+          {
+            name: 'B0',
+            type: 'animation',
+            timing: {
+              duration: 3,
+            }
+          },
+          {
+            name: 'B1',
+            type: 'animation',
+            timing: {
+              duration: 4,
+            }
+          },
+          {
+            name: 'B2',
+            type: 'animation',
+            timing: {
+              duration: 3,
+            }
+          },
+        ],
+      },
+      {
+        name: 'Sequence C',
+        type: 'sequence',
+        children: [
+          {
+            name: 'C0',
+            type: 'animation',
+            timing: {
+              duration: 3,
+            }
+          },
+          {
+            name: 'C1',
+            type: 'animation',
+            timing: {
+              duration: 3,
+            }
+          },
+          {
+            name: 'C2',
+            type: 'animation',
+            timing: {
+              duration: 3,
+            }
+          },
+        ],
         timing: {
-          easing: 'ease',
-          direction: 'alternate',
-          iterations: 1,
-          duration: 1,
-          delay: -1,
+          delay: 1,
         }
       },
     ],
