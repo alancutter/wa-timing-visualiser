@@ -6,7 +6,7 @@ var presets = {
     name: 'Parallel Container',
     type: 'parallel',
     timing: {
-      easing: 'cubic-bezier(0, -1, 1, 2)',
+      easing: 'cubic-bezier(0, -.78, 1, 1.78)',
       // easing: 'linear',
     },
     children: [
